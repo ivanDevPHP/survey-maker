@@ -6,6 +6,7 @@ use App\Models\User;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
@@ -32,6 +33,31 @@ class AuthController extends Controller
             'password' => bcrypt($data['password'])
         ]);
 
+        $token = $user->createToken('main')->plainTextToken;
+
+        return response([
+            'user' => $user,
+            'token' => $token
+        ]);
+    }
+
+    public function login(Request $request){
+        $credentials = $request->validate([
+            'email' =>  'required|email|string|unique:users,email',
+            'password' => [
+                'required',
+            ]
+        ]);
+
+
+
+        if(!Auth::attempt($credentials, false)){
+            return response([
+                'error' => 'The Provided credentials are not correct'
+            ], 422);
+        }
+
+        $user = Auth::user();
         $token = $user->createToken('main')->plainTextToken;
 
         return response([
