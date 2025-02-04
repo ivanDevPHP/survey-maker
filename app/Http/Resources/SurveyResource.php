@@ -25,7 +25,7 @@ class SurveyResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'expire_at' => $this->expire_at,
-            'questions' => [],
+            'questions' => SurveyQuestionResource::collection($this->questions)
         ];
     }
 }
