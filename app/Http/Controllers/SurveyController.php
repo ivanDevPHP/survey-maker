@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSurveyAnswerRequest;
@@ -10,6 +11,7 @@ use App\Models\Survey;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 
 class SurveyController extends Controller
 {
@@ -32,7 +34,7 @@ class SurveyController extends Controller
     /**
      * @param StoreSurveyRequest $request
      * @return SurveyResource
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function store(StoreSurveyRequest $request): SurveyResource
     {
@@ -54,7 +56,7 @@ class SurveyController extends Controller
      * @param UpdateSurveyRequest $request
      * @param Survey $survey
      * @return SurveyResource
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function update(UpdateSurveyRequest $request, Survey $survey): SurveyResource
     {

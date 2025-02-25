@@ -7,6 +7,7 @@ use App\Models\Survey;
 use App\Models\SurveyAnswer;
 use App\Models\SurveyQuestion;
 use App\Models\SurveyQuestionAnswer;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -19,13 +20,15 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StoreSurveyRequest;
 use App\Http\Requests\UpdateSurveyRequest;
 use App\Http\Requests\StoreSurveyAnswerRequest;
+use Illuminate\Validation\ValidationException;
+use JsonException;
 
 class SurveyService
 {
     /**
      * @param StoreSurveyRequest $request
      * @return Survey
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function store(StoreSurveyRequest $request): Survey
     {
@@ -83,7 +86,7 @@ class SurveyService
      * @param Survey $survey
      * @param UpdateSurveyRequest $request
      * @return Survey
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function update(Survey $survey, UpdateSurveyRequest $request): Survey
     {
@@ -141,7 +144,7 @@ class SurveyService
     /**
      * @param $image
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     private function saveImage($image): string
     {
@@ -150,17 +153,17 @@ class SurveyService
             $type = strtolower($type[1]);
 
             if (!in_array($type, ['jpg', 'jpeg', 'gif', 'png'])) {
-                throw new \Exception('Invalid image type.');
+                throw new Exception('Invalid image type.');
             }
 
             $image = str_replace(' ', '+', $image);
             $image = base64_decode($image);
 
             if ($image === false) {
-                throw new \Exception('Failed to base64 decode the image.');
+                throw new Exception('Failed to base64 decode the image.');
             }
         } else {
-            throw new \Exception('Invalid image format.');
+            throw new Exception('Invalid image format.');
         }
 
         $dir = 'images/';
@@ -182,8 +185,8 @@ class SurveyService
      *
      * @param array $data
      * @return SurveyQuestion
-     * @throws \Illuminate\Validation\ValidationException
-     * @throws \JsonException
+     * @throws ValidationException
+     * @throws JsonException
      */
     private function createQuestion(array $data): SurveyQuestion
     {
@@ -200,8 +203,8 @@ class SurveyService
      * @param SurveyQuestion $question
      * @param array $data
      * @return bool
-     * @throws \Illuminate\Validation\ValidationException
-     * @throws \JsonException
+     * @throws ValidationException
+     * @throws JsonException
      */
     private function updateQuestion(SurveyQuestion $question, array $data): bool
     {
@@ -217,7 +220,7 @@ class SurveyService
      *
      * @param array $data
      * @return array|string
-     * @throws \JsonException
+     * @throws JsonException
      */
     private function prepareQuestionData(array $data): array|string
     {

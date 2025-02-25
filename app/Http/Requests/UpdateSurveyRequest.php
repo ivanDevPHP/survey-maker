@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateSurveyRequest extends FormRequest
@@ -12,7 +13,7 @@ class UpdateSurveyRequest extends FormRequest
     public function authorize(): bool
     {
         $survey = $this->route('survey');
-        if($this->user()->id != $survey->user_id){
+        if ($this->user()->id != $survey->user_id) {
             return false;
         }
 
@@ -22,7 +23,7 @@ class UpdateSurveyRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
