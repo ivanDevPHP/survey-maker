@@ -2,74 +2,55 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Services\AuthService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
-    /**
-     * @param Request $request
-     * @return Response
-     */
-    public function register(Request $request): Response
+    private AuthService $authService;
+
+    public function __construct(AuthService $authService)
     {
-        $data = $request->validate([
-            'name' => 'required|string',
-            'email' =>  'required|email|string|unique:users,email',
-            'password' => [
-                'required',
-                'confirmed',
-                Password::min(8)->mixedCase()->numbers()->symbols()
-            ]
-        ]);
-
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password'])
-        ]);
-
-        $token = $user->createToken('main')->plainTextToken;
-
-        return response([
-            'user' => $user,
-            'token' => $token
-        ]);
+        $this->authService = $authService;
     }
 
-    public function login(Request $request){
-        $credentials = $request->validate([
-            'email' =>  'required|email|string|exists:users,email',
-            'password' => [
-                'required',
-            ]
-        ]);
+    /**
+     * @param RegisterRequest $request
+     * @return JsonResponse
+     */
+    public function register(RegisterRequest $request): JsonResponse
+    {
+        return response()->json(
+            $this->authService->register($request->validated()),
+            201
+        );
+    }
 
-        if(!Auth::attempt($credentials, false)){
-            return response([
-                'error' => 'The Provided credentials are not correct'
-            ], 422);
+    /**
+     * @param LoginRequest $request
+     * @return JsonResponse
+     */
+    public function login(LoginRequest $request): JsonResponse
+    {
+        $result = $this->authService->login($request->validated());
+
+        if (!$result) {
+            return response()->json(['error' => 'The provided credentials are incorrect.'], 422);
         }
 
-        $user = Auth::user();
-        $token = $user->createToken('main')->plainTextToken;
-
-        return response([
-            'user' => $user,
-            'token' => $token
-        ]);
+        return response()->json($result);
     }
 
-    public function logout(Request $request){
-        $user = Auth::user();
-        $user->currentAccessToken()->delete();
-
-        return response([
-            'success' => true
-        ]);
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function logout(Request $request): JsonResponse
+    {
+        $this->authService->logout($request->user());
+        return response()->json(['success' => true]);
     }
 }
