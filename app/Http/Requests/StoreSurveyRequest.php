@@ -15,7 +15,11 @@ class StoreSurveyRequest extends FormRequest
         return true;
     }
 
-    protected function prepareForValidation(){
+    /**
+     * @return void
+     */
+    protected function prepareForValidation():void
+    {
         $this->merge([
             'user_id' => $this->user()->id
         ]);
