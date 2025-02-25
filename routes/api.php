@@ -16,6 +16,14 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+// Authentication routes
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+// Public routes
+Route::get('/survey-by-slug/{survey:slug}', [SurveyController::class, 'showForGuest']);
+Route::post('/survey/{survey}/answer', [SurveyController::class, 'storeAnswer']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
@@ -28,8 +36,4 @@ Route::middleware('auth:sanctum')->group(function () {
      Route::get('/dashboard', [DashboardController::class, 'index']);
 });
 
-Route::get('/survey-by-slug/{survey:slug}', [SurveyController::class, 'showForGuest']);
-Route::post('/survey/{survey}/answer', [SurveyController::class, 'storeAnswer']);
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
