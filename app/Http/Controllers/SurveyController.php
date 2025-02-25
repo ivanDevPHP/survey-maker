@@ -7,7 +7,7 @@ use App\Http\Resources\SurveyResource;
 use App\Models\Survey;
 use App\Http\Requests\StoreSurveyRequest;
 use App\Http\Requests\UpdateSurveyRequest;
-use App\Models\SurveyAnswers;
+use App\Models\SurveyAnswer;
 use App\Models\SurveyQuestion;
 use App\Models\SurveyQuestionAnswer;
 use Illuminate\Http\Request;
@@ -76,7 +76,7 @@ class SurveyController extends Controller
     {
         $validated = $request->validated();
 
-        $surveyAnswer = SurveyAnswers::create([
+        $surveyAnswer = SurveyAnswer::create([
            'survey_id' => $survey->id,
            'start_date' => date('Y-m-d H:i:s'),
            'end_date'  => date('Y-m-d H:i:s'),
