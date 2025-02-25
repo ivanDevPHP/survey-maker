@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\DashboardService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -14,7 +15,11 @@ class DashboardController extends Controller
         $this->dashboardService = $dashboardService;
     }
 
-    public function index(Request $request)
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function index(Request $request): JsonResponse
     {
         $user = $request->user();
 

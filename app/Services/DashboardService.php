@@ -9,7 +9,11 @@ use App\Http\Resources\SurveyAnswerResourse;
 
 class DashboardService
 {
-    public function getDashboardData($user)
+    /**
+     * @param $user
+     * @return array
+     */
+    public function getDashboardData($user): array
     {
         // Total Number of Surveys
         $total = Survey::query()->where('user_id', $user->id)->count();
