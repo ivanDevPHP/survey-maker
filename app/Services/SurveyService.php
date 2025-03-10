@@ -36,6 +36,8 @@ class SurveyService
 
         if (isset($data['image'])) {
             $data['image'] = $this->saveImage($data['image']);
+        } else {
+            $data['image'] = 'images/default-survey.png';
         }
 
         $survey = Survey::create($data);
@@ -97,6 +99,8 @@ class SurveyService
             if ($survey->image) {
                 File::delete(public_path($survey->image));
             }
+        } else {
+            $data['image'] = 'images/default-survey.png';
         }
 
         $survey->update($data);

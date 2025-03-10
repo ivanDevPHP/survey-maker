@@ -49,6 +49,7 @@ class SurveyServiceTest extends TestCase
         $this->assertDatabaseHas('surveys', [
             'title' => 'PHPUnit',
             'user_id' => $user->id,
+            'image' => 'images/default-survey.png'
         ]);
 
         $response->assertStatus(201)
