@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\DashboardService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class DashboardController extends Controller
 {
@@ -26,5 +27,12 @@ class DashboardController extends Controller
         $data = $this->dashboardService->getDashboardData($user);
 
         return response()->json($data);
+    }
+
+    public function getLogs(Request $request): LengthAwarePaginator
+    {
+        $user = $request->user();
+
+        return $this->dashboardService->getLogs($user);
     }
 }

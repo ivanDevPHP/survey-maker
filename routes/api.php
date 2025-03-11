@@ -33,7 +33,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('/survey', SurveyController::class);
 
 
-     Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/logs', [DashboardController::class, 'getLogs']);
 });
 
 

@@ -6,6 +6,7 @@ use App\Models\Survey;
 use App\Models\SurveyAnswer;
 use App\Http\Resources\SurveyResourceDashboard;
 use App\Http\Resources\SurveyAnswerResourse;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class DashboardService
 {
@@ -41,5 +42,19 @@ class DashboardService
             'totalAnswers' => $totalAnswers,
             'latestAnswers' => SurveyAnswerResourse::collection($latestAnswers)
         ];
+    }
+
+    /**
+     * @param $user
+     * @return LengthAwarePaginator
+     */
+    public function getLogs($user): LengthAwarePaginator
+    {
+        return SurveyAnswer::query()
+            ->select('survey_answers.*', 'surveys.title as title')
+            ->join('surveys', 'survey_answers.survey_id', '=', 'surveys.id')
+            ->where('surveys.user_id', $user->id)
+            ->orderByDesc('survey_answers.end_date')
+            ->paginate(5);
     }
 }
