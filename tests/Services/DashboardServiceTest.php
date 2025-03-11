@@ -7,6 +7,7 @@ use App\Models\Survey;
 use App\Models\SurveyAnswer;
 use App\Models\SurveyQuestion;
 use App\Services\DashboardService;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 use App\Models\User;
@@ -78,4 +79,50 @@ class DashboardServiceTest extends TestCase
         $this->assertCount(2, $dashboardData['latestAnswers']); // Latest answers should contain 2 items
         $this->assertInstanceOf(SurveyAnswerResourse::class, $dashboardData['latestAnswers']->first()); // Each item in latest answers should be an instance of SurveyAnswerResourse
     }
+
+    /** @test */
+    public function it_returns_paginated_logs_for_a_user()
+    {
+        // Arrange: create user and related survey
+        $user = User::factory()->create();
+        $survey = Survey::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        // Create 6 survey answers (will test pagination limit of 5)
+        SurveyAnswer::factory()->count(6)->create([
+            'survey_id' => $survey->id,
+        ]);
+
+        // Act: call the method under test
+        $paginator = $this->getLogs($user);
+
+        // Assert: correct paginator returned
+        $this->assertInstanceOf(LengthAwarePaginator::class, $paginator);
+
+        // Assert: page contains only 5 items
+        $this->assertCount(5, $paginator->items());
+
+        // Assert: pagination meta data is correct
+        $this->assertEquals(1, $paginator->currentPage());
+        $this->assertEquals(5, $paginator->perPage());
+        $this->assertEquals(6, $paginator->total());
+
+        // Assert: survey title is included in result
+        $this->assertEquals($survey->title, $paginator->first()->title);
+    }
+
+    /**
+     * Method under test: get paginated logs for a user
+     */
+    protected function getLogs(User $user): LengthAwarePaginator
+    {
+        return SurveyAnswer::query()
+            ->select('survey_answers.*', 'surveys.title as title')
+            ->join('surveys', 'survey_answers.survey_id', '=', 'surveys.id')
+            ->where('surveys.user_id', $user->id)
+            ->orderByDesc('survey_answers.end_date')
+            ->paginate(5);
+    }
+
 }
