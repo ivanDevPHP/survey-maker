@@ -29,6 +29,10 @@ class DashboardController extends Controller
         return response()->json($data);
     }
 
+    /**
+     * @param Request $request
+     * @return LengthAwarePaginator
+     */
     public function getLogs(Request $request): LengthAwarePaginator
     {
         $user = $request->user();

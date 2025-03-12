@@ -86,6 +86,39 @@ class SurveyService
 
     /**
      * @param Survey $survey
+     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Model[]
+     */
+    public function getAnswersById(Survey $survey): array
+    {
+        $answers = SurveyQuestion::query()
+            ->join('surveys AS s', 'survey_questions.survey_id', '=', 's.id')
+            ->leftJoin('survey_question_answers AS sqa', 'survey_questions.id', '=', 'sqa.survey_question_id')
+            ->where('s.id', $survey->id)
+            ->select(
+                'survey_questions.id AS question_id',
+                'survey_questions.question',
+                'survey_questions.type',
+                'sqa.answer'
+            )
+            ->get();
+
+        $groupedAnswers = $answers->groupBy('question_id')->map(function ($items) {
+            $questionText = $items->first()->question;
+            $questionType = $items->first()->type;
+            $answers = $items->pluck('answer');
+
+            return [
+                'question' => $questionText,
+                'type' => $questionType,
+                'answers' => $answers
+            ];
+        });
+
+        return $groupedAnswers->toArray();
+    }
+
+    /**
+     * @param Survey $survey
      * @param UpdateSurveyRequest $request
      * @return Survey
      * @throws ValidationException

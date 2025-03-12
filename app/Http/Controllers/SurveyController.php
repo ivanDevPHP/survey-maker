@@ -53,6 +53,16 @@ class SurveyController extends Controller
     }
 
     /**
+     * @param Survey $survey
+     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Model[]
+     */
+    public function getAnswers(Survey $survey): array
+    {
+        return $this->surveyService->getAnswersById($survey);
+    }
+
+
+    /**
      * @param UpdateSurveyRequest $request
      * @param Survey $survey
      * @return SurveyResource
