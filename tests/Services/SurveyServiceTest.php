@@ -3,7 +3,9 @@
 namespace Tests\Services;
 
 use App\Models\Survey;
+use App\Models\SurveyAnswer;
 use App\Models\SurveyQuestion;
+use App\Models\SurveyQuestionAnswer;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 use App\Models\User;
@@ -293,4 +295,68 @@ class SurveyServiceTest extends TestCase
                 ],
             ]);
     }
+
+    /** @test */
+    public function it_gets_answer_data_grouped_by_question()
+    {
+        $user = User::factory()->create();
+        $survey = Survey::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        // Create two questions for the survey
+        $question1 = SurveyQuestion::factory()->create([
+            'survey_id' => $survey->id,
+            'question' => 'What is your favorite color?',
+            'type' => 'text',
+        ]);
+
+        $question2 = SurveyQuestion::factory()->create([
+            'survey_id' => $survey->id,
+            'question' => 'What is your age?',
+            'type' => 'number',
+        ]);
+
+        $answer = SurveyAnswer::factory()->create([
+            'survey_id' => $survey->id,
+        ]);
+
+        // Create answers for each question
+        SurveyQuestionAnswer::factory()->create([
+            'survey_question_id' => $question1->id,
+            'survey_answer_id' => $answer->id,
+            'answer' => 'Blue',
+        ]);
+
+        SurveyQuestionAnswer::factory()->create([
+            'survey_question_id' => $question1->id,
+            'survey_answer_id' => $answer->id,
+            'answer' => 'Green',
+        ]);
+
+        SurveyQuestionAnswer::factory()->create([
+            'survey_question_id' => $question2->id,
+            'survey_answer_id' => $answer->id,
+            'answer' => '25',
+        ]);
+
+        // Call the method you're testing
+        $service = new \App\Services\SurveyService(); // replace with your actual service class
+        $result = $service->getAnswersById($survey);
+
+        // Assertions
+        $this->assertIsArray($result);
+        $this->assertCount(2, $result);
+
+        $this->assertArrayHasKey($question1->id, $result);
+        $this->assertEquals('What is your favorite color?', $result[$question1->id]['question']);
+        $this->assertEquals('text', $result[$question1->id]['type']);
+        $this->assertEqualsCanonicalizing(['Blue', 'Green'], $result[$question1->id]['answers']->toArray());
+
+        $this->assertArrayHasKey($question2->id, $result);
+        $this->assertEquals('What is your age?', $result[$question2->id]['question']);
+        $this->assertEquals('number', $result[$question2->id]['type']);
+        $this->assertEqualsCanonicalizing(['25'], $result[$question2->id]['answers']->toArray());
+    }
+
 }
