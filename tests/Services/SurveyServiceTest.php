@@ -19,11 +19,7 @@ class SurveyServiceTest extends TestCase
     /** @test */
     public function it_stores_survey()
     {
-        $user = User::create([
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => bcrypt('Password123!'),
-        ]);
+        $user = User::factory()->create();
 
         $data = [
             'title' => 'PHPUnit',
@@ -82,11 +78,7 @@ class SurveyServiceTest extends TestCase
     /** @test */
     public function it_stores_survey_answer()
     {
-        $user = User::create([
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => bcrypt('Password123!'),
-        ]);
+        $user = User::factory()->create();
 
         $survey = Survey::create([
             'title' => 'PHPUnit',
@@ -131,11 +123,7 @@ class SurveyServiceTest extends TestCase
     /** @test */
     public function it_updates_survey()
     {
-        $user = User::create([
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => bcrypt('Password123!'),
-        ]);
+        $user = User::factory()->create();
 
         $survey = Survey::create([
             'title' => 'PHPUnit',
@@ -195,11 +183,7 @@ class SurveyServiceTest extends TestCase
     /** @test */
     public function it_deletes_survey()
     {
-        $user = User::create([
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => bcrypt('Password123!'),
-        ]);
+        $user = User::factory()->create();
 
         $survey = Survey::create([
             'title' => 'PHPUnit',
@@ -224,11 +208,7 @@ class SurveyServiceTest extends TestCase
     /** @test */
     public function it_shows_survey()
     {
-        $user = User::create([
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => bcrypt('Password123!'),
-        ]);
+        $user = User::factory()->create();
 
         $survey = Survey::create([
             'title' => 'PHPUnit',
@@ -263,11 +243,7 @@ class SurveyServiceTest extends TestCase
     /** @test */
     public function it_shows_survey_for_guest()
     {
-        $user = User::create([
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => bcrypt('Password123!'),
-        ]);
+        $user = User::factory()->create();
 
         $survey = Survey::create([
             'title' => 'PHPUnit',
