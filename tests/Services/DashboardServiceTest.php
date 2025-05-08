@@ -30,11 +30,7 @@ class DashboardServiceTest extends TestCase
     public function it_gets_dashboard_data()
     {
         // Create a user
-        $user = User::create([
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => bcrypt('Password123!'),
-        ]);
+        $user = User::factory()->create();
 
         // Create surveys for the user
         $survey1 = Survey::create([
