@@ -122,11 +122,7 @@ class AuthServiceTest extends TestCase
     /** @test */
     public function it_logs_out_a_user_and_deletes_token()
     {
-        $user = User::create([
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => bcrypt('Password123!'),
-        ]);
+        $user =  User::factory()->create();
 
         $token = $user->createToken('main')->plainTextToken;
 
